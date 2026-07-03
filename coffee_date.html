@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asking for a Coffee...? ☕</title>
+<style>
+  :root {
+    --bg1: #f7e6d0;
+    --bg2: #e8c9a3;
+    --brown: #6f4e37;
+    --cream: #fffaf3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    overflow: hidden;
+    position: relative;
+  }
+  .card {
+    background: var(--cream);
+    border-radius: 24px;
+    padding: 50px 40px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(111, 78, 55, 0.25);
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    z-index: 2;
+  }
+  .cup {
+    font-size: 60px;
+    margin-bottom: 10px;
+    animation: wiggle 2s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+  h1 {
+    color: var(--brown);
+    font-size: 26px;
+    margin: 10px 0 6px;
+  }
+  p.sub {
+    color: #a17c5b;
+    margin-bottom: 30px;
+    font-size: 15px;
+  }
+  .buttons {
+    position: relative;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  button {
+    padding: 14px 34px;
+    font-size: 17px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  #yesBtn {
+    background: var(--brown);
+    color: white;
+    box-shadow: 0 8px 20px rgba(111, 78, 55, 0.4);
+  }
+  #yesBtn:hover {
+    transform: scale(1.08);
+  }
+  #noBtn {
+    background: #f0e0cc;
+    color: var(--brown);
+    position: absolute;
+    transition: left 0.18s ease, top 0.18s ease, transform 0.15s ease;
+  }
+  .success {
+    display: none;
+  }
+  .success.show {
+    display: block;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .beans {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0.15;
+    z-index: 1;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div id="question">
+    <div class="cup">☕</div>
+    <h1>Hey Pandit,<p class="sub">official notice: it's a request for your presence at a coffee shop. Tea permitted at Irani Cafe.....</p> </h1>
+   
+    <div class="buttons" id="buttonRow">
+      <button id="yesBtn">Yup, let's go! 💛</button>
+      <button id="noBtn">No</button>
+    </div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="cup" id="successCup">🎉☕🎉</div>
+    <h1>Yay.............!!</h1>
+    <p class="sub" id="joke">Hey Miss Vampire, sometimes you have to drink a coffee also, instead of Blood — my body also requires time to create fresh blood...</p>
+    <p class="sub" style="font-size:13px; margin-top:16px;">P.S. legally binding, no refunds, no take-backs 😌</p>
+  </div>
+</div>
+
+<div id="confettiLayer" style="position:fixed; inset:0; pointer-events:none; z-index:5;"></div>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const buttonRow = document.getElementById('buttonRow');
+  const question = document.getElementById('question');
+  const success = document.getElementById('success');
+  const card = document.getElementById('card');
+
+  function moveNoButton() {
+    const rowRect = buttonRow.getBoundingClientRect();
+    const btnW = noBtn.offsetWidth;
+    const btnH = noBtn.offsetHeight;
+
+    // Move within the viewport, staying mostly near the card area but random
+    const padding = 20;
+    const maxX = window.innerWidth - btnW - padding;
+    const maxY = window.innerHeight - btnH - padding;
+
+    const newX = Math.max(padding, Math.random() * maxX);
+    const newY = Math.max(padding, Math.random() * maxY);
+
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+  }
+
+  // Move on hover / mouse approach
+  noBtn.addEventListener('mouseenter', moveNoButton);
+  noBtn.addEventListener('mouseover', moveNoButton);
+
+  // Move when the mouse wheel is scrolled anywhere (as requested: scroll toward "No" moves it)
+  window.addEventListener('wheel', () => {
+    moveNoButton();
+  });
+
+  // Also move on touch attempt for mobile users
+  noBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    moveNoButton();
+  }, { passive: false });
+
+  // Grow the Yes button a little each time No is dodged, just for fun
+  let dodges = 0;
+  noBtn.addEventListener('mouseenter', () => {
+    dodges++;
+    const scale = Math.min(1 + dodges * 0.05, 1.6);
+    yesBtn.style.transform = `scale(${scale})`;
+  });
+
+  const jokes = [
+    "Hey Miss Vampire, sometimes you have to drink a coffee also, instead of Blood — my body also requires time to create fresh blood..."
+  ];
+
+  function launchConfetti() {
+    const layer = document.getElementById('confettiLayer');
+    const emojis = ['🎉', '☕', '💛', '✨', '🎊', '😄'];
+    for (let i = 0; i < 40; i++) {
+      const piece = document.createElement('div');
+      piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      piece.style.position = 'absolute';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = '-40px';
+      piece.style.fontSize = (14 + Math.random() * 22) + 'px';
+      piece.style.transition = `transform ${2 + Math.random() * 2}s linear, opacity 2s linear`;
+      layer.appendChild(piece);
+
+      requestAnimationFrame(() => {
+        const fallY = window.innerHeight + 80;
+        const drift = (Math.random() - 0.5) * 200;
+        piece.style.transform = `translate(${drift}px, ${fallY}px) rotate(${Math.random() * 720}deg)`;
+        piece.style.opacity = '0.2';
+      });
+
+      setTimeout(() => piece.remove(), 4200);
+    }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    question.style.display = 'none';
+    success.classList.add('show');
+    document.getElementById('joke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
+    launchConfetti();
+
+    const cup = document.getElementById('successCup');
+    cup.style.animation = 'wiggle 0.4s ease-in-out 4';
+
+    // A little extra confetti burst for good measure, because why not
+    setTimeout(launchConfetti, 500);
+  });
+
+  // Sprinkle some decorative coffee beans in the background
+  const beanEmojis = ['☕', '🫘', '✨'];
+  for (let i = 0; i < 12; i++) {
+    const bean = document.createElement('div');
+    bean.className = 'beans';
+    bean.textContent = beanEmojis[Math.floor(Math.random() * beanEmojis.length)];
+    bean.style.left = Math.random() * 100 + 'vw';
+    bean.style.top = Math.random() * 100 + 'vh';
+    bean.style.fontSize = (16 + Math.random() * 24) + 'px';
+    document.body.appendChild(bean);
+  }
+</script>
+
+</body>
+</html>
