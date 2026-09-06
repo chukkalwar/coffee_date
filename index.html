@@ -26,11 +26,12 @@
   .card {
     background: var(--cream);
     border-radius: 24px;
-    padding: 50px 40px;
+    padding: 50px 80px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(111, 78, 55, 0.25);
-    max-width: 420px;
+    max-width: 500px;
     width: 90%;
+    min-height: 400px; 
     position: relative;
     z-index: 2;
   }
@@ -82,6 +83,7 @@
     background: #f0e0cc;
     color: var(--brown);
     position: absolute;
+    top: 70px;
     transition: left 0.18s ease, top 0.18s ease, transform 0.15s ease;
   }
   .success {
@@ -110,7 +112,9 @@
   <div id="question">
     <div class="cup">☕</div>
     <h1>Hey Pandit,<p class="sub">official notice: it's a request for your presence at a coffee shop. Tea permitted at Irani Cafe.....</p> </h1>
-    <button id="yesBtn">Yup, let's go! 💛</button>
+   
+    <div class="buttons" id="buttonRow">
+  <button id="yesBtn">Yup, let's go! 💛</button>
       <button id="noBtn">No</button>
     </div>
   </div>
